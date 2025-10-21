@@ -38,11 +38,4 @@
         <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.9"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="API\Controller\"/>
-        <Folder Include="API\Model\Dto\"/>
-        <Folder Include="API\Model\Repositories\"/>
-        <Folder Include="API\Services\"/>
-    </ItemGroup>
-
 </Project>

@@ -16,6 +16,7 @@ public class Street
 
     [Column("description")] public string? Description { get; set; }
 
+    [Required]
     [Column("capacity")] public int Capacity { get; set; }
 
     [Required]
