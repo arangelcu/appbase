@@ -1,4 +1,4 @@
-## InterviewApp - Monitoring System with Docker and Kubernetes
+## AppBase
 
 ### Description
 
@@ -6,12 +6,6 @@ AppBase is a .NET application with a complete monitoring stack including:
 - **Main application** (.NET with Entity Framework)
 - **Database** (PostgreSQL with PostGIS)
 - **Monitoring system** (Prometheus + Grafana)
-
-### Prerequisites
-
-- Docker and Docker Compose (for development)
-- Kubernetes cluster (minikube, kind, or production cluster) for production deployment
-- kubectl configured (for Kubernetes deployment)
 
 ### Quick Deployment
 
