@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-         <PackageReference Include="Dapper" Version="2.1.66"/>
+        <PackageReference Include="Dapper" Version="2.1.66"/>
         <PackageReference Include="DotNetEnv" Version="3.1.1"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9"/>
@@ -39,7 +39,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="API\Controller\" />
+        <Folder Include="API\Controller\"/>
+        <Folder Include="API\Model\Dto\"/>
+        <Folder Include="API\Model\Repositories\"/>
+        <Folder Include="API\Services\"/>
     </ItemGroup>
 
 </Project>

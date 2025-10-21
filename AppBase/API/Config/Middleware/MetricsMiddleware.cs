@@ -6,7 +6,6 @@ namespace AppBase.API.Config.Middleware;
 
 public class MetricsMiddleware
 {
-    private readonly RequestDelegate _next;
     private static readonly Counter _requestCounter = Metrics
         .CreateCounter("custom_controller_requests_total",
             "Total requests to annotated controllers",
@@ -24,6 +23,8 @@ public class MetricsMiddleware
                 Buckets = Histogram.ExponentialBuckets(0.001, 2, 16)
             });
 
+    private readonly RequestDelegate _next;
+
     public MetricsMiddleware(RequestDelegate next)
     {
         _next = next;
@@ -39,7 +40,7 @@ public class MetricsMiddleware
             await _next(context);
             return;
         }
-       
+
         var stopwatch = Stopwatch.StartNew();
         var method = context.Request.Method;
         var path = context.Request.Path;
@@ -51,7 +52,7 @@ public class MetricsMiddleware
         finally
         {
             stopwatch.Stop();
-            
+
             var controller = context.GetRouteValue("controller")?.ToString() ?? "Unknown";
             var action = context.GetRouteValue("action")?.ToString() ?? "Unknown";
             var statusCode = context.Response.StatusCode;
