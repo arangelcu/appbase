@@ -31,6 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k8s", "k8s", "{7BE598C9-E84
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppBaseTest", "AppBaseTest\AppBaseTest.csproj", "{573AB4DA-A0EE-46F5-A04A-33DBEA36C997}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "base", "base", "{049E3AFB-726F-4BED-97D6-ED42856CCAAF}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
