@@ -13,5 +13,5 @@ public class LandMarkReqDto
     public int? Srid { get; set; }
 
     [Required(ErrorMessage = "Field is required")]
-    public Point? Geometry { get; set; }
+    public Point Geometry { get; set; }
 }
