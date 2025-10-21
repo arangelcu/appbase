@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppBase", "AppBase\AppBase.csproj", "{B9457327-ECE2-4CA5-A724-6F2A146333C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppBaseTest", "AppBaseTest\AppBaseTest.csproj", "{4FA2A3B0-D83C-427C-A7E9-0D771838DC14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "grafana", "grafana", "{0EA4AB70-B18E-4DCD-A9C4-D838809E3374}"
+	ProjectSection(SolutionItems) = preProject
+		grafana\provisioning\dashboards\dashboard.yml = grafana\provisioning\dashboards\dashboard.yml
+		grafana\provisioning\dashboards\dashboard_controller.json = grafana\provisioning\dashboards\dashboard_controller.json
+		grafana\provisioning\datasources\datasource.yml = grafana\provisioning\datasources\datasource.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "prometheus", "prometheus", "{2EED8CAF-B875-46D0-B873-CBA15CA35D29}"
+	ProjectSection(SolutionItems) = preProject
+		prometheus.yml = prometheus.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{BFA7B45A-6D07-48B5-874E-8335F71D91B4}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yml = compose.yml
+		AppBase\Dockerfile = AppBase\Dockerfile
+		.env = .env
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k8s", "k8s", "{7BE598C9-E84A-428C-8D96-1FCF15EC2359}"
+	ProjectSection(SolutionItems) = preProject
+		k8s\k8s_backend.yml = k8s\k8s_backend.yml
+		k8s\k8s_grafana.yml = k8s\k8s_grafana.yml
+		k8s\k8s_postgres.yml = k8s\k8s_postgres.yml
+		k8s\k8s_prometheus.yml = k8s\k8s_prometheus.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9457327-ECE2-4CA5-A724-6F2A146333C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9457327-ECE2-4CA5-A724-6F2A146333C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9457327-ECE2-4CA5-A724-6F2A146333C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9457327-ECE2-4CA5-A724-6F2A146333C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA2A3B0-D83C-427C-A7E9-0D771838DC14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA2A3B0-D83C-427C-A7E9-0D771838DC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA2A3B0-D83C-427C-A7E9-0D771838DC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA2A3B0-D83C-427C-A7E9-0D771838DC14}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

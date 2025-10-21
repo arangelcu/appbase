@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appbaseapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: appbaseapp
+  template:
+    metadata:
+      labels:
+        app: appbaseapp
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgis/postgis:15-3.3
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL to be ready..."
+              until pg_isready -h postgresdb-service -p 5432 -U postgres -d appbasedb; do
+                echo "PostgreSQL not ready yet. Retrying in 5 seconds..."
+                sleep 5
+              done
+              echo "PostgreSQL is ready!"
+              
+              echo "Waiting for PostGIS extensions to be available..."
+              until psql -h postgresdb-service -p 5432 -U postgres -d appbasedb -c "SELECT postgis_version();" > /dev/null 2>&1; do
+                echo "PostGIS not ready yet. Retrying in 3 seconds..."
+                sleep 3
+              done
+              echo "PostGIS is ready!"
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+      containers:
+        - name: appbaseapp
+          image: arangelcu/appbaseapp:latest    
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_CONNECTION
+              value: "Host=postgresdb-service;Port=5432;Database=appbasedb;Username=postgres;Password=postgres"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appbaseapp-service
+spec:
+  selector:
+    app: appbaseapp
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort
