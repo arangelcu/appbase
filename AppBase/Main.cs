@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
-using AppBase.API.Config.Data;
-using AppBase.API.Config.Extensions;
-using AppBase.API.Config.Filters;
-using AppBase.API.Config.Srid;
+using AppBase.Config.Data;
+using AppBase.Config.Extensions;
+using AppBase.Config.Filters;
+using AppBase.Config.Srid;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.IO.Converters;
 using Prometheus;

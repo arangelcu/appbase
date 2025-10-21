@@ -1,0 +1,85 @@
+# ==================================
+# API STREETS - EXAMPLE REQUESTS
+# ==================================
+
+### Get all streets
+GET http://localhost:8000/street
+
+###
+
+### Get street by id
+GET http://localhost:8000/street/1
+
+###
+
+### Add street
+POST http://localhost:8000/street
+Content-Type: application/json
+
+{
+  "name": "New street",
+  "description": "New street Description",
+  "capacity": 300,
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        8.40479,
+        49.00939
+      ],
+      [
+        8.40510,
+        49.00950
+      ],
+      [
+        8.40545,
+        49.00962
+      ],
+      [
+        8.40586,
+        49.00974
+      ]
+    ]
+  }
+}
+
+###
+
+### Update street by id
+PUT http://localhost:8000/street/16
+Content-Type: application/json
+
+{
+  "name": "New street updated",
+  "description": "New street updated Description",
+  "capacity": 500,
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        8.40579,
+        49.00939
+      ],
+      [
+        8.40610,
+        49.00950
+      ],
+      [
+        8.40645,
+        49.00962
+      ],
+      [
+        8.40686,
+        49.00974
+      ]
+    ]
+  }
+}
+
+###
+
+### Delete street by id
+DELETE http://localhost:8000/street/20
+
+###
+
