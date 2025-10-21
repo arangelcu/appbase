@@ -47,7 +47,7 @@ spec:
             - name: DB_CONNECTION
               value: "Host=postgresdb-service;Port=5432;Database=appbasedb;Username=postgres;Password=postgres"
             - name: ASPNETCORE_ENVIRONMENT
-              value: "Development"
+              value: "Production"
 ---
 apiVersion: v1
 kind: Service
