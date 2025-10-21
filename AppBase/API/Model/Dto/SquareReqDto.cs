@@ -3,7 +3,7 @@ using NetTopologySuite.Geometries;
 
 namespace AppBase.API.Model.Dto;
 
-public class StreetReqDto
+public class SquareReqDto
 {
     [Required(ErrorMessage = "Field is required")]
     public string Name { get; set; }
@@ -14,7 +14,7 @@ public class StreetReqDto
     public int Capacity { get; set; }
 
     public int? Srid { get; set; }
-
+    
     [Required(ErrorMessage = "Field is required")]
-    public LineString Geometry { get; set; }
+    public Polygon Geometry { get; set; }
 }

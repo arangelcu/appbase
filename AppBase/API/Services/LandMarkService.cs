@@ -41,11 +41,11 @@ public class LandMarkService : ILandMarkService
     {
         if (dto.Srid != null && dto.Srid != _sridSettings.TargetSrid)
         {
-            dto.Geometry =
-                (Point)await _dbContext.ReprojectPointAsync(dto.Geometry, dto.Srid.Value,
-                    _sridSettings.TargetSrid);
-            if (dto.Geometry == null)
+            Point? geom = await _dbContext.ReprojectPointAsync(dto.Geometry, dto.Srid.Value,
+                _sridSettings.TargetSrid);
+            if (geom == null)
                 return new BadRequestObjectResult(Message.Error_Reprojection);
+            dto.Geometry = geom;
         }
 
         return await _landMarkRepository.Add(dto);
@@ -55,11 +55,11 @@ public class LandMarkService : ILandMarkService
     {
         if (dto.Srid != null && dto.Srid != _sridSettings.TargetSrid)
         {
-            dto.Geometry =
-                (Point)await _dbContext.ReprojectPointAsync(dto.Geometry, dto.Srid.Value,
-                    _sridSettings.TargetSrid);
-            if (dto.Geometry == null)
+            Point? geom = await _dbContext.ReprojectPointAsync(dto.Geometry, dto.Srid.Value,
+                _sridSettings.TargetSrid);
+            if (geom == null)
                 return new BadRequestObjectResult(Message.Error_Reprojection);
+            dto.Geometry = geom;
         }
 
         return await _landMarkRepository.Upd(dto, id);
