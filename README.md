@@ -39,22 +39,22 @@ Grafana	        http://localhost:8002	8002	Dashboards and visualizations
 ```bash 
 # Clone the repository
 git clone https://github.com/arangelcu/appbase.git
-cd appbase
+cd .\appbase\
 
 # Apply Kubernetes manifests
-kubectl apply -f k8s_postgres.yml
-kubectl apply -f k8s_backend.yml
-kubectl apply -f k8s_prometheus.yml
-kubectl apply -f k8s_grafana.yml
+kubectl apply -f .\k8s\k8s_postgres.yml
+kubectl apply -f .\k8s\k8s_backend.yml
+kubectl apply -f .\k8s\k8s_prometheus.yml
+kubectl apply -f .\k8s\k8s_grafana.yml
+
+# Alternatively, apply all YAML files in the directory
+kubectl apply -f .\k8s\
 
 # Verify pods are running
 kubectl get pods --watch
-
-# Alternatively, apply all YAML files in the directory
-kubectl apply -f ./
 ```
 #### Kubernetes >> Services and Ports (Kubernetes)
-``` 
+```
 Service	        Local URL               Port	Description
 PostgreSQL      localhost:30432	        30432	Database with PostGIS
 AppBase     	http://localhost:30080	30080	Main .NET application
@@ -73,7 +73,7 @@ Password: postgres           Password: admin
 Database: appbasedb
 ``` 
 
-#### Testing API Endpoints
+### Testing API Endpoints
 ```
 API usage examples are available in the following files:
     --> AppBase/Http/LandMark.http
@@ -81,7 +81,7 @@ API usage examples are available in the following files:
     --> AppBase/Http/Square.http
 ```
 
-#### Documentation
+### Documentation
 ``` 
 To view the OpenAPI documentation, enable Development mode 
 
