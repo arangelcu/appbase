@@ -172,15 +172,7 @@ public class SquareService : ISquareService
         if (obj.Geometry == null)
             return new BadRequestObjectResult("Invalid geometry. Expected Polygon.");
 
-        var isPointInside = false;
-        if (dto.Postgis is true)
-        {
-        }
-        else
-        {
-            // Use NetTopologySuite's built-in Contains method (uses ray casting internally)
-            isPointInside = obj.Geometry.Contains(dto.Point);
-        }
+        var isPointInside = obj.Geometry.Contains(dto.Point);
 
         return new OkObjectResult(isPointInside);
     }
