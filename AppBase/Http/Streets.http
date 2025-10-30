@@ -1,6 +1,5 @@
-# ==================================
-# API STREETS - EXAMPLE REQUESTS
-# ==================================
+### API STREETS - EXAMPLE REQUESTS
+### ==================================
 
 ### Get all streets
 GET http://localhost:8000/street
@@ -78,11 +77,6 @@ Content-Type: application/json
 
 ###
 
-### Delete street by id
-DELETE http://localhost:8000/street/16
-
-###
-
 ### Add point to closest street endpoint
 PUT http://localhost:8000/street/16/add_point
 Content-Type: application/json
@@ -114,6 +108,11 @@ Content-Type: application/json
     ]
   }
 }
+
+###
+
+### Delete street by id
+DELETE http://localhost:8000/street/16
 
 ###
 

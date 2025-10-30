@@ -69,4 +69,39 @@ public class SquareController : ControllerBase
     {
         return await _squareService.Del(id);
     }
+
+    [HttpPut]
+    [Route("{id:int}/add_point")]
+    [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddPointToSquare(int id, GeometryUpdDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        return await _squareService.AddPointToSquare(id, dto);
+    }
+
+    [HttpGet]
+    [Route("{id:int}/contain_point")]
+    [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CheckSquareContainPoint(int id, GeometryUpdDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        return await _squareService.CheckSquareContainPoint(id, dto);
+    }
+
+    [HttpGet]
+    [Route("{id:int}/centroid")]
+    [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetSquareCentroid(int id)
+    {
+        return await _squareService.GetSquareCentroid(id);
+    }
 }

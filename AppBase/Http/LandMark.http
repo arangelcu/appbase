@@ -1,6 +1,5 @@
-# ==================================
-# API LANDMARKS - EXAMPLE REQUESTS
-# ==================================
+### API LANDMARKS - EXAMPLE REQUESTS
+### ==================================
 
 ### Get all landmarks
 GET http://localhost:8000/landmark
@@ -49,7 +48,7 @@ Content-Type: application/json
 ###
 
 ### Delete landmark by id
-DELETE http://localhost:8000/landmark/20
+DELETE http://localhost:8000/landmark/16
 
 ###
 

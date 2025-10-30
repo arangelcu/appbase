@@ -15,4 +15,10 @@ public interface ISquareService
     Task<ActionResult> Upd(SquareReqDto dto, int id);
 
     Task<ActionResult> Del(int id);
+
+    Task<IActionResult> AddPointToSquare(int id, GeometryUpdDto dto);
+
+    Task<IActionResult> CheckSquareContainPoint(int id, GeometryUpdDto dto);
+
+    Task<IActionResult> GetSquareCentroid(int id);
 }

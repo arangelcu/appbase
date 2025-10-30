@@ -1,6 +1,5 @@
-# ==================================
-# API SQUARES - EXAMPLE REQUESTS
-# ==================================
+### API SQUARES - EXAMPLE REQUESTS
+### ==================================
 
 ### Get all squares
 GET http://localhost:8000/square
@@ -84,6 +83,43 @@ Content-Type: application/json
           49.00951
         ]
       ]
+    ]
+  }
+}
+
+###
+
+### Add given point to the nearest edge in the square
+PUT http://localhost:8000/square/16/add_point
+Content-Type: application/json
+
+{
+  "point": {
+    "type": "Point",
+    "coordinates": [
+      8.405393,
+      49.008940
+    ]
+  }
+}
+
+###
+
+### Get Square Centroid
+GET http://localhost:8000/square/1/centroid
+
+###
+
+### Validate if the given point is inside square
+GET http://localhost:8000/square/1/contain_point
+Content-Type: application/json
+
+{
+  "point": {
+    "type": "Point",
+    "coordinates": [
+      8.404335,
+      49.009257
     ]
   }
 }

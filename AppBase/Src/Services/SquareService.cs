@@ -4,6 +4,7 @@ using AppBase.Model.Dto;
 using AppBase.Model.Entity;
 using AppBase.Model.Repositories;
 using AppBase.Utils;
+using AppBase.Utils.Geometry;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -132,5 +133,73 @@ public class SquareService : ISquareService
         await _dbContext.SaveChangesAsync();
         await transaction.CommitAsync();
         return new OkObjectResult(Message.Resource_Deleted);
+    }
+
+    public async Task<IActionResult> AddPointToSquare(int id, GeometryUpdDto dto)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Squares.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        if (obj.Geometry == null)
+            return new BadRequestObjectResult("Invalid geometry. Expected Polygon.");
+
+        if (dto.Postgis is true)
+        {
+        }
+        else
+        {
+            obj.Geometry = PolygonUtils.AddPointToPolygonClosestEdge(obj.Geometry, dto.Point);
+        }
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return new OkObjectResult(new SquareResDto()
+        {
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
+    }
+
+    public async Task<IActionResult> CheckSquareContainPoint(int id, GeometryUpdDto dto)
+    {
+        var obj = await _dbContext.Squares.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        if (obj.Geometry == null)
+            return new BadRequestObjectResult("Invalid geometry. Expected Polygon.");
+
+        var isPointInside = false;
+        if (dto.Postgis is true)
+        {
+        }
+        else
+        {
+            // Use NetTopologySuite's built-in Contains method (uses ray casting internally)
+            isPointInside = obj.Geometry.Contains(dto.Point);
+        }
+
+        return new OkObjectResult(isPointInside);
+    }
+
+    public async Task<IActionResult> GetSquareCentroid(int id)
+    {
+        var obj = await _dbContext.Squares.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        if (obj.Geometry == null)
+            return new BadRequestObjectResult("Invalid geometry. Expected Polygon.");
+
+        // Calculate centroid
+        var centroid = obj.Geometry.Centroid;
+
+        if (centroid == null || centroid.IsEmpty)
+        {
+            return new BadRequestObjectResult("Could not calculate centroid for the polygon.");
+        }
+
+        return new OkObjectResult(centroid);
     }
 }
