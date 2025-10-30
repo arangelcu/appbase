@@ -13,7 +13,7 @@ using NetTopologySuite.IO;
 
 namespace AppBaseTest.Controller;
 
-public class StreetControllerTest
+public class StreetControllerTest:IDisposable
 {
     private readonly ApiDbContext _dbContext;
     private readonly StreetController _streetController;
@@ -293,7 +293,8 @@ public class StreetControllerTest
         var dto = new StreetReqDto
         {
             Name = "Test",
-            Description = "Test Description"
+            Description = "Test Description",
+            Capacity = 100
         };
 
         var exceptionMessage = "Invalid operation";
@@ -321,7 +322,8 @@ public class StreetControllerTest
         var dto = new StreetReqDto
         {
             Name = "Test",
-            Description = "Test Description"
+            Description = "Test Description",
+            Capacity = 100
         };
 
         var exceptionMessage = "Invalid operation";

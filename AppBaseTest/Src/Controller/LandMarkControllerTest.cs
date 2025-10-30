@@ -13,7 +13,7 @@ using NetTopologySuite.IO;
 
 namespace AppBaseTest.Controller;
 
-public class LandMarkControllerTest
+public class LandMarkControllerTest:IDisposable
 {
     private readonly ApiDbContext _dbContext;
     private readonly LandMarkController _landMarkController;

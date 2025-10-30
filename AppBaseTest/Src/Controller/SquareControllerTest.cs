@@ -13,7 +13,7 @@ using NetTopologySuite.IO;
 
 namespace AppBaseTest.Controller;
 
-public class SquareControllerTest
+public class SquareControllerTest:IDisposable
 {
     private readonly ApiDbContext _dbContext;
     private readonly SquareController _squareController;

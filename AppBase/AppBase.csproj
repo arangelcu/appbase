@@ -37,5 +37,10 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6"/>
         <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.9"/>
     </ItemGroup>
+    
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+        <Exec Command="dotnet test --verbosity normal"
+              Condition="'$(Configuration)' == 'Debug'" />
+    </Target>
 
 </Project>

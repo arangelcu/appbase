@@ -20,13 +20,10 @@ public class StreetRepository : IStreetRepository
     {
         var query = _dbContext.Streets.AsQueryable();
 
-        if (!string.IsNullOrEmpty(name))
-            query = query.Where(r => EF.Functions.ILike(r.Name, $"%{name}%"));
+        if (!string.IsNullOrEmpty(name)) query = query.Where(r => r.Name.ToLower().Contains(name.ToLower()));
 
         if (!string.IsNullOrEmpty(description))
-            query = query.Where(r =>
-                r.Description != null &&
-                EF.Functions.ILike(r.Description, $"%{description}%"));
+            query = query.Where(r => r.Description != null && r.Description.ToLower().Contains(description.ToLower()));
 
         var totalCount = await query.CountAsync();
 
