@@ -1,6 +1,7 @@
 ﻿using AppBase.Model.Dto;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Mvc;
+using NetTopologySuite.Geometries;
 
 namespace AppBase.Services;
 
@@ -15,4 +16,10 @@ public interface IStreetService
     Task<ActionResult> Upd(StreetReqDto dto, int id);
 
     Task<ActionResult> Del(int id);
+
+    Task<IActionResult> DelPointFromStreet(int id, GeometryUpdDto dto);
+
+    Task<IActionResult> AddPointToStreet(int id, GeometryUpdDto dto);
+
+    Task<IActionResult> SmoothStreet(int id,GeometrySmoothDto dto);
 }

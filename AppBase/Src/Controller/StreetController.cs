@@ -4,6 +4,7 @@ using AppBase.Services;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using NetTopologySuite.Geometries;
 
 namespace AppBase.Controller;
 
@@ -68,5 +69,41 @@ public class StreetController : ControllerBase
     public async Task<IActionResult> Del(int id)
     {
         return await _streetService.Del(id);
+    }
+
+    //Remove Closest Point
+    [HttpPut]
+    [Route("{id:int}/remove_closest")]
+    [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DelPointFromStreet(int id, GeometryUpdDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        return await _streetService.DelPointFromStreet(id, dto);
+    }
+
+    //Extend Line
+    [HttpPut]
+    [Route("{id:int}/extend")]
+    [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddPointToStreet(int id, GeometryUpdDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        return await _streetService.AddPointToStreet(id, dto);
+    }
+
+    //Smooth Curve
+    [HttpPut]
+    [Route("{id:int}/smooth")]
+    [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SmoothStreet(int id, GeometrySmoothDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        return await _streetService.SmoothStreet(id, dto);
     }
 }

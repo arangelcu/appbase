@@ -1,9 +1,11 @@
 ﻿using System.Data;
+using System.Diagnostics;
 using AppBase.Config.Data;
 using AppBase.Model.Dto;
 using AppBase.Model.Entity;
 using AppBase.Model.Repositories;
 using AppBase.Utils;
+using AppBase.Utils.Geometry;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -131,5 +133,96 @@ public class StreetService : IStreetService
         await _dbContext.SaveChangesAsync();
         await transaction.CommitAsync();
         return new OkObjectResult(Message.Resource_Deleted);
+    }
+
+    public async Task<IActionResult> DelPointFromStreet(int id, GeometryUpdDto dto)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null)
+            return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        if (obj.Geometry == null)
+            return new BadRequestObjectResult("Invalid geometry. Expected LineString.");
+
+        if (obj.Geometry.Coordinates.Length < 3)
+            return new BadRequestObjectResult("Line must have at least 3 points to remove one.");
+
+        if (dto.Postgis is true)
+        {
+        }
+        else
+        {
+            obj.Geometry = LineStringUtils.RemoveClosestLinestringPointFromReferencePoint(obj.Geometry, dto.Point);
+        }
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return new OkObjectResult(new StreetResDto
+        {
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
+    }
+
+    public async Task<IActionResult> AddPointToStreet(int id, GeometryUpdDto dto)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        if (obj.Geometry == null)
+            return new BadRequestObjectResult("Invalid geometry. Expected LineString.");
+
+        if (dto.Postgis is true)
+        {
+            obj.Geometry =
+                await LineStringUtils.AddPointToClosestLinestringEndpointPostGis(_dbContext, obj.Geometry,
+                    dto.Point);
+        }
+        else
+        {
+            obj.Geometry = LineStringUtils.AddPointToClosestLinestringEndpoint(obj.Geometry, dto.Point);
+        }
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return new OkObjectResult(new StreetResDto
+        {
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
+    }
+
+    public async Task<IActionResult> SmoothStreet(int id, GeometrySmoothDto dto)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        if (obj.Geometry == null)
+            return new BadRequestObjectResult("Invalid geometry. Expected LineString.");
+
+        if (dto.Postgis is true)
+        {
+        }
+        else
+        {
+            obj.Geometry = LineStringUtils.ApplyBezierSmoothingToLinestring(obj.Geometry, dto.Intensity);
+        }
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return new OkObjectResult(new StreetResDto
+        {
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
     }
 }
