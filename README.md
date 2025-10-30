@@ -76,9 +76,9 @@ Database: appbasedb
 ### Testing API Endpoints
 ```
 API usage examples are available in the following files:
-    --> AppBase/Http/LandMark.http
+    --> AppBase/Http/LandMarks.http
     --> AppBase/Http/Streets.http
-    --> AppBase/Http/Square.http
+    --> AppBase/Http/Squares.http
 ```
 
 ### Documentation

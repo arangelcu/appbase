@@ -71,12 +71,12 @@ public class LineStringUtils
     public static LineString RemoveClosestLinestringPointFromReferencePoint(LineString line, Point point)
     {
         Console.WriteLine("Find the index of the closest point to the reference point.");
-        int closestIndex = -1;
-        double minDistance = double.MaxValue;
+        var closestIndex = -1;
+        var minDistance = double.MaxValue;
 
-        for (int i = 0; i < line.Coordinates.Length; i++)
+        for (var i = 0; i < line.Coordinates.Length; i++)
         {
-            double distance = point.Distance(new Point(line.Coordinates[i]));
+            var distance = point.Distance(new Point(line.Coordinates[i]));
             if (distance < minDistance)
             {
                 minDistance = distance;
@@ -86,16 +86,14 @@ public class LineStringUtils
 
         Console.WriteLine("Create new coordinates array without the closest point.");
         var newCoordinates = new Coordinate[line.Coordinates.Length - 1];
-        int newIndex = 0;
+        var newIndex = 0;
 
-        for (int i = 0; i < line.Coordinates.Length; i++)
-        {
+        for (var i = 0; i < line.Coordinates.Length; i++)
             if (i != closestIndex)
             {
                 newCoordinates[newIndex] = line.Coordinates[i];
                 newIndex++;
             }
-        }
 
         return new LineString(newCoordinates.ToArray());
     }
@@ -103,7 +101,7 @@ public class LineStringUtils
     public static LineString ApplyBezierSmoothingToLinestring(LineString line, double intensity)
     {
         // Number of intermediate points to generate between each original point
-        int segments = (int)(10 * intensity) + 2; // 2 to 12 segments based on intensity
+        var segments = (int)(10 * intensity) + 2; // 2 to 12 segments based on intensity
 
         var smoothedPoints = new List<Coordinate>();
 
@@ -111,28 +109,25 @@ public class LineStringUtils
         smoothedPoints.Add(line.Coordinates[0]);
 
         Console.WriteLine("Generate smoothed points for each segment.");
-        for (int i = 0; i < line.Coordinates.Length - 1; i++)
+        for (var i = 0; i < line.Coordinates.Length - 1; i++)
         {
-            Coordinate p0 = (i == 0) ? line.Coordinates[0] : line.Coordinates[i - 1];
-            Coordinate p1 = line.Coordinates[i];
-            Coordinate p2 = line.Coordinates[i + 1];
-            Coordinate p3 = (i == line.Coordinates.Length - 2)
+            var p0 = i == 0 ? line.Coordinates[0] : line.Coordinates[i - 1];
+            var p1 = line.Coordinates[i];
+            var p2 = line.Coordinates[i + 1];
+            var p3 = i == line.Coordinates.Length - 2
                 ? line.Coordinates[line.Coordinates.Length - 1]
                 : line.Coordinates[i + 2];
-          
+
             Console.WriteLine("Generate intermediate points using cubic Bezier.");
-            for (int j = 1; j < segments; j++)
+            for (var j = 1; j < segments; j++)
             {
-                double t = (double)j / segments;
-                Coordinate smoothedPoint = CalculateCubicBezierPoint(p0, p1, p2, p3, t, intensity);
+                var t = (double)j / segments;
+                var smoothedPoint = CalculateCubicBezierPoint(p0, p1, p2, p3, t, intensity);
                 smoothedPoints.Add(smoothedPoint);
             }
 
             Console.WriteLine(" Add the original control point (with reduced influence based on intensity).");
-            if (i < line.Coordinates.Length - 1)
-            {
-                smoothedPoints.Add(p2);
-            }
+            if (i < line.Coordinates.Length - 1) smoothedPoints.Add(p2);
         }
 
         return new LineString(smoothedPoints.ToArray());
@@ -143,28 +138,28 @@ public class LineStringUtils
         double intensity)
     {
         // Adjust control points based on intensity
-        double tension = 0.5 * intensity;
+        var tension = 0.5 * intensity;
 
         // Calculate intermediate control points
-        Coordinate cp1 = new Coordinate(
+        var cp1 = new Coordinate(
             p1.X + tension * (p2.X - p0.X),
             p1.Y + tension * (p2.Y - p0.Y)
         );
 
-        Coordinate cp2 = new Coordinate(
+        var cp2 = new Coordinate(
             p2.X - tension * (p3.X - p1.X),
             p2.Y - tension * (p3.Y - p1.Y)
         );
 
         // Cubic Bezier formula: B(t) = (1-t)³P0 + 3(1-t)²tP1 + 3(1-t)t²P2 + t³P3
-        double u = 1 - t;
-        double u2 = u * u;
-        double t2 = t * t;
-        double u3 = u2 * u;
-        double t3 = t2 * t;
+        var u = 1 - t;
+        var u2 = u * u;
+        var t2 = t * t;
+        var u3 = u2 * u;
+        var t3 = t2 * t;
 
-        double x = u3 * p1.X + 3 * u2 * t * cp1.X + 3 * u * t2 * cp2.X + t3 * p2.X;
-        double y = u3 * p1.Y + 3 * u2 * t * cp1.Y + 3 * u * t2 * cp2.Y + t3 * p2.Y;
+        var x = u3 * p1.X + 3 * u2 * t * cp1.X + 3 * u * t2 * cp2.X + t3 * p2.X;
+        var y = u3 * p1.Y + 3 * u2 * t * cp1.Y + 3 * u * t2 * cp2.Y + t3 * p2.Y;
 
         return new Coordinate(x, y);
     }

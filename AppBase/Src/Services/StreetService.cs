@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Diagnostics;
 using AppBase.Config.Data;
 using AppBase.Model.Dto;
 using AppBase.Model.Entity;
@@ -177,15 +176,11 @@ public class StreetService : IStreetService
             return new BadRequestObjectResult("Invalid geometry. Expected LineString.");
 
         if (dto.Postgis is true)
-        {
             obj.Geometry =
                 await LineStringUtils.AddPointToClosestLinestringEndpointPostGis(_dbContext, obj.Geometry,
                     dto.Point);
-        }
         else
-        {
             obj.Geometry = LineStringUtils.AddPointToClosestLinestringEndpoint(obj.Geometry, dto.Point);
-        }
 
         await _dbContext.SaveChangesAsync();
         await transaction.CommitAsync();

@@ -154,7 +154,7 @@ public class SquareService : ISquareService
 
         await _dbContext.SaveChangesAsync();
         await transaction.CommitAsync();
-        return new OkObjectResult(new SquareResDto()
+        return new OkObjectResult(new SquareResDto
         {
             Name = obj.Name,
             Description = obj.Description,
@@ -196,9 +196,7 @@ public class SquareService : ISquareService
         var centroid = obj.Geometry.Centroid;
 
         if (centroid == null || centroid.IsEmpty)
-        {
             return new BadRequestObjectResult("Could not calculate centroid for the polygon.");
-        }
 
         return new OkObjectResult(centroid);
     }

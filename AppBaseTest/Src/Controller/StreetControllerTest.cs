@@ -334,7 +334,7 @@ public class StreetControllerTest
 
         // Execution
         var exception = await Assert.ThrowsAsync<Exception>(() =>
-            controller.Upd(dto, id));
+            controller.Upd(id, dto));
 
         // Assert
         Assert.Equal(exceptionMessage, exception.Message);
