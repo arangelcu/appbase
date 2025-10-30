@@ -13,8 +13,6 @@ public class StreetReqDto
     [Required(ErrorMessage = "Field is required")]
     public int Capacity { get; set; }
 
-    public int? Srid { get; set; }
-
     [Required(ErrorMessage = "Field is required")]
     public LineString Geometry { get; set; }
 }

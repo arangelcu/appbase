@@ -1,12 +1,15 @@
-﻿using AppBase.Config.Data;
-using AppBase.Config.Extensions;
-using AppBase.Config.Srid;
+﻿using System.Data;
+using AppBase.Config.Data;
 using AppBase.Model.Dto;
+using AppBase.Model.Entity;
 using AppBase.Model.Repositories;
 using AppBase.Utils;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.IO;
 
 namespace AppBase.Services;
 
@@ -14,58 +17,120 @@ public class SquareService : ISquareService
 {
     private readonly ApiDbContext _dbContext;
     private readonly ISquareRepository _squareRepository;
-    private readonly SridSettings _sridSettings;
 
-    public SquareService(ApiDbContext dbContext, ISquareRepository squareRepository,
-        IOptions<SridSettings> sridSettings)
+
+    public SquareService(ApiDbContext dbContext, ISquareRepository squareRepository)
     {
         _dbContext = dbContext;
         _squareRepository = squareRepository;
-        _sridSettings = sridSettings.Value;
     }
 
     public async Task<ActionResult> GetAll(string? name, string? description, bool? geojson, Pageable pageable)
     {
-        if (geojson is true) return await _squareRepository.GetAllGeoJson(name, description, pageable);
+        var obj = await _squareRepository.GetAll(name, description, pageable);
 
-        return await _squareRepository.GetAll(name, description, pageable);
+        if (geojson is true)
+        {
+            var featureCollection = new FeatureCollection();
+            foreach (var item in obj.Data)
+                featureCollection.Add(new Feature
+                {
+                    Geometry = item.Geometry,
+                    Attributes = new AttributesTable
+                    {
+                        { "id", item.Id },
+                        { "name", item.Name },
+                        { "description", item.Description },
+                        { "capacity", item.Capacity }
+                    }
+                });
+
+            var writer = new GeoJsonWriter();
+            var geoJson = writer.Write(featureCollection);
+
+            return new ContentResult
+            {
+                Content = geoJson,
+                ContentType = "application/json",
+                StatusCode = 200
+            };
+        }
+
+        return new OkObjectResult(obj);
     }
 
     public async Task<ActionResult> GetById(int id)
     {
-        return await _squareRepository.GetById(id);
+        var obj = await _dbContext.Squares
+            .Where(r => r.Id == id)
+            .Select(r => new SquareResDto
+            {
+                Name = r.Name,
+                Description = r.Description,
+                Geometry = (Polygon)r.Geometry,
+                Capacity = r.Capacity
+            })
+            .FirstOrDefaultAsync();
+        return obj == null ? new NotFoundObjectResult(Message.Warning_NotFound) : new OkObjectResult(obj);
     }
 
     public async Task<ActionResult> Add(SquareReqDto dto)
     {
-        if (dto.Srid != null && dto.Srid != _sridSettings.TargetSrid)
+        var obj = new Square
         {
-            var geom = await _dbContext.ReprojectPolygonAsync(dto.Geometry, dto.Srid.Value,
-                _sridSettings.TargetSrid);
-            if (geom == null)
-                return new BadRequestObjectResult(Message.Error_Reprojection);
-            dto.Geometry = geom;
-        }
+            Name = dto.Name,
+            Description = dto.Description,
+            UpdateAt = DateTime.UtcNow,
+            Geometry = dto.Geometry,
+            Capacity = dto.Capacity
+        };
+        _dbContext.Squares.Add(obj);
+        await _dbContext.SaveChangesAsync();
 
-        return await _squareRepository.Add(dto);
+        return new OkObjectResult(new SquareResDto
+        {
+            Id = obj.Id,
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
     }
 
     public async Task<ActionResult> Upd(SquareReqDto dto, int id)
     {
-        if (dto.Srid != null && dto.Srid != _sridSettings.TargetSrid)
-        {
-            var geom = await _dbContext.ReprojectPolygonAsync(dto.Geometry, dto.Srid.Value,
-                _sridSettings.TargetSrid);
-            if (geom == null)
-                return new BadRequestObjectResult(Message.Error_Reprojection);
-            dto.Geometry = geom;
-        }
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Squares.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
 
-        return await _squareRepository.Upd(dto, id);
+        obj.Name = dto.Name;
+        obj.Description = dto.Description;
+        obj.UpdateAt = DateTime.UtcNow;
+        obj.Geometry = dto.Geometry;
+        obj.Capacity = obj.Capacity;
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return new OkObjectResult(new SquareResDto
+        {
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
     }
 
     public async Task<ActionResult> Del(int id)
     {
-        return await _squareRepository.Del(id);
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Squares.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        _dbContext.Squares.Remove(obj);
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return new OkObjectResult(Message.Resource_Deleted);
     }
 }

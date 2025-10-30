@@ -1,5 +1,4 @@
 ﻿using AppBase.Config.Data;
-using AppBase.Config.Srid;
 using AppBase.Controller;
 using AppBase.Model.Dto;
 using AppBase.Model.Entity;
@@ -8,7 +7,6 @@ using AppBase.Services;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Moq;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
@@ -31,15 +29,8 @@ public class SquareControllerTest
         // Initialize repository
         ISquareRepository repository = new SquareRepository(_dbContext);
 
-        // Initialize srid class
-        var sridSettings = Options.Create(new SridSettings
-        {
-            DefaultSourceSrid = 4326,
-            TargetSrid = 4326
-        });
-
         // Initialize service
-        var service = new SquareService(_dbContext, repository, sridSettings);
+        var service = new SquareService(_dbContext, repository);
 
         // Initialize controller
         _squareController = new SquareController(service);

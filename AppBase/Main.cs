@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using AppBase.Config.Data;
 using AppBase.Config.Extensions;
 using AppBase.Config.Filters;
-using AppBase.Config.Srid;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.IO.Converters;
 using Prometheus;
@@ -17,9 +16,6 @@ builder.Services.AddControllers(options => { options.Filters.Add<GlobalException
     })
     .AddDataAnnotationsLocalization();
 builder.Services.AddApplicationServices();
-builder.Services.Configure<SridSettings>(
-    builder.Configuration.GetSection("SridSettings"));
-
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 

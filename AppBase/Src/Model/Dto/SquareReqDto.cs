@@ -13,8 +13,6 @@ public class SquareReqDto
     [Required(ErrorMessage = "Field is required")]
     public int Capacity { get; set; }
 
-    public int? Srid { get; set; }
-
     [Required(ErrorMessage = "Field is required")]
     public Polygon Geometry { get; set; }
 }

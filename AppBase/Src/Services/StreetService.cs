@@ -1,71 +1,135 @@
-﻿using AppBase.Config.Data;
-using AppBase.Config.Extensions;
-using AppBase.Config.Srid;
+﻿using System.Data;
+using AppBase.Config.Data;
 using AppBase.Model.Dto;
+using AppBase.Model.Entity;
 using AppBase.Model.Repositories;
 using AppBase.Utils;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.IO;
 
 namespace AppBase.Services;
 
 public class StreetService : IStreetService
 {
     private readonly ApiDbContext _dbContext;
-    private readonly SridSettings _sridSettings;
     private readonly IStreetRepository _streetRepository;
 
-    public StreetService(ApiDbContext dbContext, IStreetRepository streetRepository,
-        IOptions<SridSettings> sridSettings)
+    public StreetService(ApiDbContext dbContext, IStreetRepository streetRepository)
     {
         _dbContext = dbContext;
         _streetRepository = streetRepository;
-        _sridSettings = sridSettings.Value;
     }
 
     public async Task<ActionResult> GetAll(string? name, string? description, bool? geojson, Pageable pageable)
     {
-        if (geojson is true) return await _streetRepository.GetAllGeoJson(name, description, pageable);
+        var obj = await _streetRepository.GetAll(name, description, pageable);
 
-        return await _streetRepository.GetAll(name, description, pageable);
+        if (geojson is true)
+        {
+            var featureCollection = new FeatureCollection();
+            foreach (var item in obj.Data)
+                featureCollection.Add(new Feature
+                {
+                    Geometry = item.Geometry,
+                    Attributes = new AttributesTable
+                    {
+                        { "id", item.Id },
+                        { "name", item.Name },
+                        { "description", item.Description },
+                        { "capacity", item.Capacity }
+                    }
+                });
+
+            var writer = new GeoJsonWriter();
+            var geoJson = writer.Write(featureCollection);
+
+            return new ContentResult
+            {
+                Content = geoJson,
+                ContentType = "application/json",
+                StatusCode = 200
+            };
+        }
+
+        return new OkObjectResult(obj);
     }
 
     public async Task<ActionResult> GetById(int id)
     {
-        return await _streetRepository.GetById(id);
+        var obj = await _dbContext.Streets
+            .Where(r => r.Id == id)
+            .Select(r => new StreetResDto
+            {
+                Name = r.Name,
+                Description = r.Description,
+                Geometry = (LineString)r.Geometry,
+                Capacity = r.Capacity
+            })
+            .FirstOrDefaultAsync();
+        return obj == null ? new NotFoundObjectResult(Message.Warning_NotFound) : new OkObjectResult(obj);
     }
 
     public async Task<ActionResult> Add(StreetReqDto dto)
     {
-        if (dto.Srid != null && dto.Srid != _sridSettings.TargetSrid)
+        var obj = new Street
         {
-            var geom = await _dbContext.ReprojectLineStringAsync(dto.Geometry, dto.Srid.Value,
-                _sridSettings.TargetSrid);
-            if (geom == null)
-                return new BadRequestObjectResult(Message.Error_Reprojection);
-            dto.Geometry = geom;
-        }
+            Name = dto.Name,
+            Description = dto.Description,
+            UpdateAt = DateTime.UtcNow,
+            Geometry = dto.Geometry,
+            Capacity = dto.Capacity
+        };
+        _dbContext.Streets.Add(obj);
+        await _dbContext.SaveChangesAsync();
 
-        return await _streetRepository.Add(dto);
+        return new OkObjectResult(new StreetResDto
+        {
+            Id = obj.Id,
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
     }
 
     public async Task<ActionResult> Upd(StreetReqDto dto, int id)
     {
-        if (dto.Srid != null && dto.Srid != _sridSettings.TargetSrid)
-        {
-            var geom = await _dbContext.ReprojectLineStringAsync(dto.Geometry, dto.Srid.Value,
-                _sridSettings.TargetSrid);
-            if (geom == null)
-                return new BadRequestObjectResult(Message.Error_Reprojection);
-            dto.Geometry = geom;
-        }
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
 
-        return await _streetRepository.Upd(dto, id);
+        obj.Name = dto.Name;
+        obj.Description = dto.Description;
+        obj.UpdateAt = DateTime.UtcNow;
+        obj.Geometry = dto.Geometry;
+        obj.Capacity = obj.Capacity;
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return new OkObjectResult(new StreetResDto
+        {
+            Name = obj.Name,
+            Description = obj.Description,
+            Geometry = obj.Geometry,
+            Capacity = obj.Capacity
+        });
     }
 
     public async Task<ActionResult> Del(int id)
     {
-        return await _streetRepository.Del(id);
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);
+        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
+
+        _dbContext.Streets.Remove(obj);
+
+        await _dbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return new OkObjectResult(Message.Resource_Deleted);
     }
 }

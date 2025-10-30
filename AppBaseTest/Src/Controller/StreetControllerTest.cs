@@ -1,5 +1,4 @@
 ﻿using AppBase.Config.Data;
-using AppBase.Config.Srid;
 using AppBase.Controller;
 using AppBase.Model.Dto;
 using AppBase.Model.Entity;
@@ -8,7 +7,6 @@ using AppBase.Services;
 using AppBase.Utils.Paging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Moq;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
@@ -31,15 +29,8 @@ public class StreetControllerTest
         // Initialize repository
         IStreetRepository repository = new StreetRepository(_dbContext);
 
-        // Initialize srid class
-        var sridSettings = Options.Create(new SridSettings
-        {
-            DefaultSourceSrid = 4326,
-            TargetSrid = 4326
-        });
-
         // Initialize service
-        var service = new StreetService(_dbContext, repository, sridSettings);
+        var service = new StreetService(_dbContext, repository);
 
         // Initialize controller
         _streetController = new StreetController(service);
