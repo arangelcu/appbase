@@ -315,7 +315,7 @@ public class SquareControllerTest
         Assert.Equal(exceptionMessage, exception.Message);
     }
 
-    // PUT Upd Square Tests
+    // PUT Update Square Tests
     [Fact]
     public async Task UpdSquare_WhenServiceThrowsException()
     {
@@ -329,22 +329,22 @@ public class SquareControllerTest
         };
 
         var exceptionMessage = "Invalid operation";
-        mockService.Setup(s => s.Upd(
-            It.IsAny<SquareReqDto>(),
-            It.IsAny<int>()
+        mockService.Setup(s => s.Update(
+            It.IsAny<int>(),
+            It.IsAny<SquareReqDto>()
         )).ThrowsAsync(new Exception(exceptionMessage));
 
         var controller = new SquareController(mockService.Object);
 
         // Execution
         var exception = await Assert.ThrowsAsync<Exception>(() =>
-            controller.Upd(id, dto));
+            controller.Update(id, dto));
 
         // Assert
         Assert.Equal(exceptionMessage, exception.Message);
     }
 
-    // DELETE Del Square Tests
+    // DELETE Delete Square Tests
     [Fact]
     public async Task DelSquare_WhenServiceThrowsException()
     {
@@ -353,7 +353,7 @@ public class SquareControllerTest
         var mockService = new Mock<ISquareService>();
 
         var exceptionMessage = "Invalid operation";
-        mockService.Setup(s => s.Del(
+        mockService.Setup(s => s.Delete(
             It.IsAny<int>()
         )).ThrowsAsync(new Exception(exceptionMessage));
 
@@ -361,7 +361,7 @@ public class SquareControllerTest
 
         // Execution
         var exception = await Assert.ThrowsAsync<Exception>(() =>
-            controller.Del(id));
+            controller.Delete(id));
 
         // Assert
         Assert.Equal(exceptionMessage, exception.Message);

@@ -111,7 +111,7 @@ GET http://localhost:8000/square/1/centroid
 ###
 
 ### Validate if the given point is inside square
-GET http://localhost:8000/square/1/contain_point
+POST http://localhost:8000/square/1/contain_point
 Content-Type: application/json
 
 {

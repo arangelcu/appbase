@@ -98,7 +98,7 @@ public class SquareService : ISquareService
         });
     }
 
-    public async Task<ActionResult> Upd(SquareReqDto dto, int id)
+    public async Task<ActionResult> Update(int id, SquareReqDto dto)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var obj = await _dbContext.Squares.FirstOrDefaultAsync(r => r.Id == id);
@@ -122,7 +122,7 @@ public class SquareService : ISquareService
         });
     }
 
-    public async Task<ActionResult> Del(int id)
+    public async Task<ActionResult> Delete(int id)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var obj = await _dbContext.Squares.FirstOrDefaultAsync(r => r.Id == id);

@@ -311,7 +311,7 @@ public class StreetControllerTest
         Assert.Equal(exceptionMessage, exception.Message);
     }
 
-    // PUT Upd Street Tests
+    // PUT Update Street Tests
     [Fact]
     public async Task UpdStreet_WhenServiceThrowsException()
     {
@@ -325,22 +325,22 @@ public class StreetControllerTest
         };
 
         var exceptionMessage = "Invalid operation";
-        mockService.Setup(s => s.Upd(
-            It.IsAny<StreetReqDto>(),
-            It.IsAny<int>()
+        mockService.Setup(s => s.Update(
+            It.IsAny<int>(),
+            It.IsAny<StreetReqDto>()
         )).ThrowsAsync(new Exception(exceptionMessage));
 
         var controller = new StreetController(mockService.Object);
 
         // Execution
         var exception = await Assert.ThrowsAsync<Exception>(() =>
-            controller.Upd(id, dto));
+            controller.Update(id, dto));
 
         // Assert
         Assert.Equal(exceptionMessage, exception.Message);
     }
 
-    // DELETE Del Street Tests
+    // DELETE Delete Street Tests
     [Fact]
     public async Task DelStreet_WhenServiceThrowsException()
     {
@@ -349,7 +349,7 @@ public class StreetControllerTest
         var mockService = new Mock<IStreetService>();
 
         var exceptionMessage = "Invalid operation";
-        mockService.Setup(s => s.Del(
+        mockService.Setup(s => s.Delete(
             It.IsAny<int>()
         )).ThrowsAsync(new Exception(exceptionMessage));
 
@@ -357,7 +357,7 @@ public class StreetControllerTest
 
         // Execution
         var exception = await Assert.ThrowsAsync<Exception>(() =>
-            controller.Del(id));
+            controller.Delete(id));
 
         // Assert
         Assert.Equal(exceptionMessage, exception.Message);

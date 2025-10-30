@@ -12,7 +12,7 @@ public interface ILandMarkService
 
     Task<ActionResult> Add(LandMarkReqDto dto);
 
-    Task<ActionResult> Upd(LandMarkReqDto dto, int id);
+    Task<ActionResult> Update(int id, LandMarkReqDto dto);
 
-    Task<ActionResult> Del(int id);
+    Task<ActionResult> Delete(int id);
 }

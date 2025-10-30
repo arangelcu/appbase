@@ -91,7 +91,7 @@ public class LandMarkService : ILandMarkService
         });
     }
 
-    public async Task<ActionResult> Upd(LandMarkReqDto dto, int id)
+    public async Task<ActionResult> Update(int id, LandMarkReqDto dto)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var obj = await _dbContext.LandMarks.FirstOrDefaultAsync(r => r.Id == id);
@@ -113,7 +113,7 @@ public class LandMarkService : ILandMarkService
         });
     }
 
-    public async Task<ActionResult> Del(int id)
+    public async Task<ActionResult> Delete(int id)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var obj = await _dbContext.LandMarks.FirstOrDefaultAsync(r => r.Id == id);

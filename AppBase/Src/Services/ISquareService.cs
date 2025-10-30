@@ -12,9 +12,9 @@ public interface ISquareService
 
     Task<ActionResult> Add(SquareReqDto dto);
 
-    Task<ActionResult> Upd(SquareReqDto dto, int id);
+    Task<ActionResult> Update(int id, SquareReqDto dto);
 
-    Task<ActionResult> Del(int id);
+    Task<ActionResult> Delete(int id);
 
     Task<IActionResult> AddPointToSquare(int id, GeometryUpdDto dto);
 

@@ -36,46 +36,46 @@ public class StreetController : ControllerBase
     }
 
     [HttpPost]
+    [ValidateModel]
     public async Task<IActionResult> Add([FromBody] StreetReqDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _streetService.Add(dto);
     }
 
     [HttpPut]
     [Route("{id:int}")]
-    public async Task<IActionResult> Upd([FromRoute] int id, [FromBody] StreetReqDto dto)
+    [ValidateModel]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] StreetReqDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        return await _streetService.Upd(dto, id);
+        return await _streetService.Update(id, dto);
     }
 
     [HttpDelete]
     [Route("{id:int}")]
-    public async Task<IActionResult> Del([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        return await _streetService.Del(id);
+        return await _streetService.Delete(id);
     }
 
     //Remove Closest Point
     [HttpPut]
     [Route("{id:int}/remove_closest")]
+    [ValidateModel]
     public async Task<IActionResult> DelPointFromStreet(
         [FromRoute] int id,
         [FromBody] GeometryUpdDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _streetService.DelPointFromStreet(id, dto);
     }
 
     //Extend Line
     [HttpPut]
     [Route("{id:int}/add_point")]
+    [ValidateModel]
     public async Task<IActionResult> AddPointToStreet(
         [FromRoute] int id,
         [FromBody] GeometryUpdDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _streetService.AddPointToStreet(id, dto);
     }
 }

@@ -12,9 +12,9 @@ public interface IStreetService
 
     Task<ActionResult> Add(StreetReqDto dto);
 
-    Task<ActionResult> Upd(StreetReqDto dto, int id);
+    Task<ActionResult> Update(int id, StreetReqDto dto);
 
-    Task<ActionResult> Del(int id);
+    Task<ActionResult> Delete(int id);
 
     Task<IActionResult> DelPointFromStreet(int id, GeometryUpdDto dto);
 

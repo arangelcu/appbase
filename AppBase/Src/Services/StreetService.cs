@@ -97,7 +97,7 @@ public class StreetService : IStreetService
         });
     }
 
-    public async Task<ActionResult> Upd(StreetReqDto dto, int id)
+    public async Task<ActionResult> Update(int id, StreetReqDto dto)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);
@@ -121,7 +121,7 @@ public class StreetService : IStreetService
         });
     }
 
-    public async Task<ActionResult> Del(int id)
+    public async Task<ActionResult> Delete(int id)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);

@@ -298,7 +298,7 @@ public class LandMarkControllerTest
         Assert.Equal(exceptionMessage, exception.Message);
     }
 
-    // PUT Upd LandMark Tests
+    // PUT Update LandMark Tests
     [Fact]
     public async Task UpdLandMark_WhenServiceThrowsException()
     {
@@ -312,22 +312,22 @@ public class LandMarkControllerTest
         };
 
         var exceptionMessage = "Invalid operation";
-        mockService.Setup(s => s.Upd(
-            It.IsAny<LandMarkReqDto>(),
-            It.IsAny<int>()
+        mockService.Setup(s => s.Update(
+            It.IsAny<int>(),
+            It.IsAny<LandMarkReqDto>()
         )).ThrowsAsync(new Exception(exceptionMessage));
 
         var controller = new LandMarkController(mockService.Object);
 
         // Execution
         var exception = await Assert.ThrowsAsync<Exception>(() =>
-            controller.Upd(id, dto));
+            controller.Update(id, dto));
 
         // Assert
         Assert.Equal(exceptionMessage, exception.Message);
     }
 
-    // DELETE Del LandMark Tests
+    // DELETE Delete LandMark Tests
     [Fact]
     public async Task DelLandMark_WhenServiceThrowsException()
     {
@@ -336,7 +336,7 @@ public class LandMarkControllerTest
         var mockService = new Mock<ILandMarkService>();
 
         var exceptionMessage = "Invalid operation";
-        mockService.Setup(s => s.Del(
+        mockService.Setup(s => s.Delete(
             It.IsAny<int>()
         )).ThrowsAsync(new Exception(exceptionMessage));
 
@@ -344,7 +344,7 @@ public class LandMarkControllerTest
 
         // Execution
         var exception = await Assert.ThrowsAsync<Exception>(() =>
-            controller.Del(id));
+            controller.Delete(id));
 
         // Assert
         Assert.Equal(exceptionMessage, exception.Message);

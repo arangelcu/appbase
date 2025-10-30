@@ -36,46 +36,46 @@ public class SquareController : ControllerBase
     }
 
     [HttpPost]
+    [ValidateModel]
     public async Task<IActionResult> Add([FromBody] SquareReqDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _squareService.Add(dto);
     }
 
     [HttpPut]
     [Route("{id:int}")]
-    public async Task<IActionResult> Upd(
+    [ValidateModel]
+    public async Task<IActionResult> Update(
         [FromRoute] int id,
         [FromBody] SquareReqDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        return await _squareService.Upd(dto, id);
+        return await _squareService.Update(id, dto);
     }
 
     [HttpDelete]
     [Route("{id:int}")]
-    public async Task<IActionResult> Del([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        return await _squareService.Del(id);
+        return await _squareService.Delete(id);
     }
 
     [HttpPut]
     [Route("{id:int}/add_point")]
+    [ValidateModel]
     public async Task<IActionResult> AddPointToSquare(
         [FromRoute] int id,
         [FromBody] GeometryUpdDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _squareService.AddPointToSquare(id, dto);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("{id:int}/contain_point")]
+    [ValidateModel]
     public async Task<IActionResult> CheckSquareContainPoint(
         [FromRoute] int id,
         [FromBody] GeometryUpdDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _squareService.CheckSquareContainPoint(id, dto);
     }
 

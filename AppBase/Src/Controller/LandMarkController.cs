@@ -36,26 +36,26 @@ public class LandMarkController : ControllerBase
     }
 
     [HttpPost]
+    [ValidateModel]
     public async Task<IActionResult> Add([FromBody] LandMarkReqDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _landMarkService.Add(dto);
     }
 
     [HttpPut]
     [Route("{id:int}")]
-    public async Task<IActionResult> Upd(
+    [ValidateModel]
+    public async Task<IActionResult> Update(
         [FromRoute] int id,
         [FromBody] LandMarkReqDto dto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        return await _landMarkService.Upd(dto, id);
+        return await _landMarkService.Update(id, dto);
     }
 
     [HttpDelete]
     [Route("{id:int}")]
-    public async Task<IActionResult> Del([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        return await _landMarkService.Del(id);
+        return await _landMarkService.Delete(id);
     }
 }
