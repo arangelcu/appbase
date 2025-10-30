@@ -197,32 +197,4 @@ public class StreetService : IStreetService
             Capacity = obj.Capacity
         });
     }
-
-    public async Task<IActionResult> SmoothStreet(int id, GeometrySmoothDto dto)
-    {
-        await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-        var obj = await _dbContext.Streets.FirstOrDefaultAsync(r => r.Id == id);
-        if (obj == null) return new NotFoundObjectResult(Message.Warning_NotFound);
-
-        if (obj.Geometry == null)
-            return new BadRequestObjectResult("Invalid geometry. Expected LineString.");
-
-        if (dto.Postgis is true)
-        {
-        }
-        else
-        {
-            obj.Geometry = LineStringUtils.ApplyBezierSmoothingToLinestring(obj.Geometry, dto.Intensity);
-        }
-
-        await _dbContext.SaveChangesAsync();
-        await transaction.CommitAsync();
-        return new OkObjectResult(new StreetResDto
-        {
-            Name = obj.Name,
-            Description = obj.Description,
-            Geometry = obj.Geometry,
-            Capacity = obj.Capacity
-        });
-    }
 }

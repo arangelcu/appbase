@@ -85,7 +85,7 @@ public class StreetController : ControllerBase
 
     //Extend Line
     [HttpPut]
-    [Route("{id:int}/extend")]
+    [Route("{id:int}/add_point")]
     [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
@@ -93,17 +93,5 @@ public class StreetController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         return await _streetService.AddPointToStreet(id, dto);
-    }
-
-    //Smooth Curve
-    [HttpPut]
-    [Route("{id:int}/smooth")]
-    [ProducesResponseType(typeof(OkObjectResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SmoothStreet(int id, GeometrySmoothDto dto)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        return await _streetService.SmoothStreet(id, dto);
     }
 }

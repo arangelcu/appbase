@@ -20,6 +20,4 @@ public interface IStreetService
     Task<IActionResult> DelPointFromStreet(int id, GeometryUpdDto dto);
 
     Task<IActionResult> AddPointToStreet(int id, GeometryUpdDto dto);
-
-    Task<IActionResult> SmoothStreet(int id,GeometrySmoothDto dto);
 }

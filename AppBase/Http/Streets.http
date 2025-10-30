@@ -79,7 +79,41 @@ Content-Type: application/json
 ###
 
 ### Delete street by id
-DELETE http://localhost:8000/street/20
+DELETE http://localhost:8000/street/16
+
+###
+
+### Add point to closest street endpoint
+PUT http://localhost:8000/street/16/add_point
+Content-Type: application/json
+
+{
+  "postgis": false,
+  "point": {
+    "type": "Point",
+    "coordinates": [
+      8.38582,
+      49.01165
+    ]
+  }
+}
+
+###
+
+### Remove closest street coordinate to given point
+PUT http://localhost:8000/street/16/remove_closest
+Content-Type: application/json
+
+{
+  "postgis": false,
+  "point": {
+    "type": "Point",
+    "coordinates": [
+      8.38582,
+      49.01165
+    ]
+  }
+}
 
 ###
 
