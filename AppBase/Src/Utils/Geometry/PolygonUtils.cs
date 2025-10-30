@@ -1,4 +1,7 @@
-﻿using NetTopologySuite.Geometries;
+﻿using AppBase.Config.Data;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.IO;
 
 namespace AppBase.Utils.Geometry;
 
@@ -131,5 +134,39 @@ public class PolygonUtils
             return null;
 
         return newPolygon;
+    }
+
+    public static async Task<Polygon?> AddPointToPolygonClosestEdgePostGis(
+        ApiDbContext dbContext, Polygon polygon, Point point)
+    {
+        if (polygon.ExteriorRing.Coordinates.Length < 3)
+            throw new InvalidOperationException("Polygon must have at least 3 distinct points");
+
+        var polygonWkt = polygon.AsText();
+        var pointWkt = point.AsText();
+
+        try
+        {
+            var result = await dbContext.Database
+                .SqlQueryRaw<SqlResult>(
+                    $@"SELECT add_point_to_polygon_closest_edge('{polygonWkt}', '{pointWkt}') as ""Value"" ")
+                .FirstOrDefaultAsync();
+
+            if (result == null || string.IsNullOrEmpty(result.Value))
+                throw new InvalidOperationException(
+                    "Error executing PostGIS function add_point_to_polygon_closest_edge");
+
+            var reader = new WKTReader();
+            var newPolygon = (Polygon)reader.Read(result.Value);
+
+            if (!newPolygon.IsValid)
+                return null;
+
+            return newPolygon;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error in PostGIS polygon operation: {ex.Message}");
+        }
     }
 }

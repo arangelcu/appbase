@@ -94,6 +94,7 @@ PUT http://localhost:8000/square/16/add_point
 Content-Type: application/json
 
 {
+  "postgis": false,
   "point": {
     "type": "Point",
     "coordinates": [

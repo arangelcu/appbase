@@ -146,6 +146,7 @@ public class SquareService : ISquareService
 
         if (dto.Postgis is true)
         {
+            obj.Geometry = await PolygonUtils.AddPointToPolygonClosestEdgePostGis(_dbContext, obj.Geometry, dto.Point);
         }
         else
         {
