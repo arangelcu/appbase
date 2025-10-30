@@ -21,28 +21,28 @@ public class SquareRepository : ISquareRepository
     {
         var query = _dbContext.Squares.AsQueryable();
 
-        if (!string.IsNullOrEmpty(name)) query = query.Where(r => r.Name.ToLower().Contains(name.ToLower()));
+        if (!string.IsNullOrEmpty(name))
+            query = query.Where(r => EF.Functions.ILike(r.Name, $"%{name}%"));
 
         if (!string.IsNullOrEmpty(description))
-            query = query.Where(r => r.Description.ToLower().Contains(description.ToLower()));
+            query = query.Where(r =>
+                r.Description != null &&
+                EF.Functions.ILike(r.Description, $"%{description}%"));
 
         var totalCount = await query.CountAsync();
 
         if (!string.IsNullOrEmpty(pageable.SortBy))
         {
-            var sortExpression = pageable.SortOrder?.ToLower() == "desc"
-                ? $"{pageable.SortBy} DESC"
-                : pageable.SortBy;
-
+            var sortDirection = pageable.SortOrder?.ToLower() == "desc" ? "DESC" : "ASC";
+            var sortExpression = $"{pageable.SortBy} {sortDirection}";
             query = query.OrderBy(sortExpression);
         }
         else
         {
-            query = query.OrderBy(wt => wt.Id);
+            query = query.OrderBy("Id");
         }
 
-        var page = pageable.Page - 1;
-        if (page < 0) page = 0;
+        var page = pageable.Page <= 0 ? 0 : pageable.Page - 1;
 
         var allData = await query
             .Select(w => new SquareResDto
@@ -57,15 +57,13 @@ public class SquareRepository : ISquareRepository
             .Take(pageable.PageSize)
             .ToListAsync();
 
-        var totalPages = (int)Math.Ceiling(totalCount / (double)pageable.PageSize);
-
         return new Utils.Paging.PagedResult<SquareResDto>
         {
             Data = allData,
             Page = pageable.Page,
             PageSize = pageable.PageSize,
             TotalCount = totalCount,
-            TotalPages = totalPages
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageable.PageSize)
         };
     }
 }
