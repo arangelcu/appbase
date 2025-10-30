@@ -98,69 +98,28 @@ public class LineStringUtils
         return new LineString(newCoordinates.ToArray());
     }
 
-    public static LineString ApplyBezierSmoothingToLinestring(LineString line, double intensity)
-    {
-        // Number of intermediate points to generate between each original point
-        var segments = (int)(10 * intensity) + 2; // 2 to 12 segments based on intensity
+    public static async Task<LineString> RemoveClosestLinestringPointFromReferencePointPostGis(
+        ApiDbContext dbContext, LineString line, Point point) {
+       
+        if (line.Coordinates.Length < 3)
+            throw new InvalidOperationException("Line must have at least 3 points to remove one.");
 
-        var smoothedPoints = new List<Coordinate>();
+        var lineWkt = line.AsText();
+        var pointWkt = point.AsText();
 
-        // Always include the first point
-        smoothedPoints.Add(line.Coordinates[0]);
+        var result = await dbContext.Database
+            .SqlQueryRaw<SqlResult>($@"
+            SELECT remove_closest_point_from_line(
+                '{lineWkt}', 
+                '{pointWkt}'
+            ) as ""Value""
+        ")
+            .FirstOrDefaultAsync();
 
-        Console.WriteLine("Generate smoothed points for each segment.");
-        for (var i = 0; i < line.Coordinates.Length - 1; i++)
-        {
-            var p0 = i == 0 ? line.Coordinates[0] : line.Coordinates[i - 1];
-            var p1 = line.Coordinates[i];
-            var p2 = line.Coordinates[i + 1];
-            var p3 = i == line.Coordinates.Length - 2
-                ? line.Coordinates[line.Coordinates.Length - 1]
-                : line.Coordinates[i + 2];
+        if (result == null || string.IsNullOrEmpty(result.Value))
+            throw new InvalidOperationException("Error executing PostGIS function remove_closest_point_from_line");
 
-            Console.WriteLine("Generate intermediate points using cubic Bezier.");
-            for (var j = 1; j < segments; j++)
-            {
-                var t = (double)j / segments;
-                var smoothedPoint = CalculateCubicBezierPoint(p0, p1, p2, p3, t, intensity);
-                smoothedPoints.Add(smoothedPoint);
-            }
-
-            Console.WriteLine(" Add the original control point (with reduced influence based on intensity).");
-            if (i < line.Coordinates.Length - 1) smoothedPoints.Add(p2);
-        }
-
-        return new LineString(smoothedPoints.ToArray());
-    }
-
-    private static Coordinate CalculateCubicBezierPoint(Coordinate p0, Coordinate p1, Coordinate p2, Coordinate p3,
-        double t,
-        double intensity)
-    {
-        // Adjust control points based on intensity
-        var tension = 0.5 * intensity;
-
-        // Calculate intermediate control points
-        var cp1 = new Coordinate(
-            p1.X + tension * (p2.X - p0.X),
-            p1.Y + tension * (p2.Y - p0.Y)
-        );
-
-        var cp2 = new Coordinate(
-            p2.X - tension * (p3.X - p1.X),
-            p2.Y - tension * (p3.Y - p1.Y)
-        );
-
-        // Cubic Bezier formula: B(t) = (1-t)³P0 + 3(1-t)²tP1 + 3(1-t)t²P2 + t³P3
-        var u = 1 - t;
-        var u2 = u * u;
-        var t2 = t * t;
-        var u3 = u2 * u;
-        var t3 = t2 * t;
-
-        var x = u3 * p1.X + 3 * u2 * t * cp1.X + 3 * u * t2 * cp2.X + t3 * p2.X;
-        var y = u3 * p1.Y + 3 * u2 * t * cp1.Y + 3 * u * t2 * cp2.Y + t3 * p2.Y;
-
-        return new Coordinate(x, y);
+        var reader = new WKTReader();
+        return (LineString)reader.Read(result.Value);
     }
 }

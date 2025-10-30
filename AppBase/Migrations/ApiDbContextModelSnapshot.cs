@@ -24,7 +24,7 @@ namespace AppBase.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AppBase.API.Model.Entity.LandMark", b =>
+            modelBuilder.Entity("AppBase.Model.Entity.LandMark", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,7 +66,7 @@ namespace AppBase.Migrations
                     b.ToTable("landmarks", "public");
                 });
 
-            modelBuilder.Entity("AppBase.API.Model.Entity.Square", b =>
+            modelBuilder.Entity("AppBase.Model.Entity.Square", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,7 +112,7 @@ namespace AppBase.Migrations
                     b.ToTable("squares", "public");
                 });
 
-            modelBuilder.Entity("AppBase.API.Model.Entity.Street", b =>
+            modelBuilder.Entity("AppBase.Model.Entity.Street", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

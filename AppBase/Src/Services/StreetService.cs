@@ -149,6 +149,9 @@ public class StreetService : IStreetService
 
         if (dto.Postgis is true)
         {
+            obj.Geometry =
+                await LineStringUtils.RemoveClosestLinestringPointFromReferencePointPostGis(_dbContext, obj.Geometry,
+                    dto.Point);
         }
         else
         {
