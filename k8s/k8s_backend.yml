@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: appbaseapp
+  name: appbase
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: appbaseapp
+      app: appbase
   template:
     metadata:
       labels:
-        app: appbaseapp
+        app: appbase
     spec:
       initContainers:
         - name: wait-for-postgres
@@ -39,8 +39,8 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
       containers:
-        - name: appbaseapp
-          image: arangelcu/appbaseapp:latest    
+        - name: appbase
+          image: arangelcu/appbase:latest
           ports:
             - containerPort: 8080
           env:
@@ -52,10 +52,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: appbaseapp-service
+  name: appbase-service
 spec:
   selector:
-    app: appbaseapp
+    app: appbase
   ports:
     - port: 80
       targetPort: 8080

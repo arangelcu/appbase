@@ -17,7 +17,7 @@ git clone https://github.com/arangelcu/appbase.git
 cd .\appbase\
 
 # Build and start services
-docker-compose up -d
+docker-compose up -d --build
 
 # Check service status
 docker-compose ps
@@ -40,6 +40,19 @@ Grafana	        http://localhost:8002	8002	Dashboards and visualizations
 # Clone the repository
 git clone https://github.com/arangelcu/appbase.git
 cd .\appbase\
+
+# Building Docker image (optional if is already created)
+docker build -t appbase:latest -f AppBase/Dockerfile .
+
+# Update registry
+docker login -u <your_username>
+docker tag appbase <your_username>/appbase:latest
+docker push <your_username>/appbase:latest
+
+# Update ImageUrl in .\k8s\k8s_backend.yml
+      containers:
+        - name: appbase
+          image: <your_username>/appbase:latest  --> Update ImageUrl
 
 # Apply Kubernetes manifests
 kubectl apply -f .\k8s\k8s_postgres.yml
