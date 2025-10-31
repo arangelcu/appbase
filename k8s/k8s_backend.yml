@@ -40,7 +40,8 @@ spec:
                   key: POSTGRES_PASSWORD
       containers:
         - name: appbase
-          image: arangelcu/appbase:latest
+          image: appbase:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:

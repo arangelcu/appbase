@@ -44,7 +44,13 @@ cd .\appbase\
 # Building Docker image (optional if is already created)
 docker build -t appbase:latest -f AppBase/Dockerfile .
 
-# Update registry
+# Use local appbase image set in .\k8s\k8s_backend.yml
+      containers:    
+        - name: appbase
+          image: appbase:latest
+          imagePullPolicy: Never
+
+# Use registry appbase image
 docker login -u <your_username>
 docker tag appbase <your_username>/appbase:latest
 docker push <your_username>/appbase:latest
@@ -52,7 +58,7 @@ docker push <your_username>/appbase:latest
 # Update ImageUrl in .\k8s\k8s_backend.yml
       containers:
         - name: appbase
-          image: <your_username>/appbase:latest  --> Update ImageUrl
+          image: <your_username>/appbase:latest
 
 # Apply Kubernetes manifests
 kubectl apply -f .\k8s\k8s_postgres.yml
