@@ -44,18 +44,18 @@ cd .\appbase\
 # Building Docker image (optional if is already created)
 docker build -t appbase:latest -f AppBase/Dockerfile .
 
-# Use local appbase image set in .\k8s\k8s_backend.yml
+# Use Local appbase image 
+## Update ImageUrl in .\k8s\k8s_backend.yml
       containers:    
         - name: appbase
           image: appbase:latest
           imagePullPolicy: Never
 
-# Use registry appbase image
+# Alternatively, Use Registry appbase image
 docker login -u <your_username>
 docker tag appbase <your_username>/appbase:latest
 docker push <your_username>/appbase:latest
-
-# Update ImageUrl in .\k8s\k8s_backend.yml
+## Update ImageUrl in .\k8s\k8s_backend.yml
       containers:
         - name: appbase
           image: <your_username>/appbase:latest
